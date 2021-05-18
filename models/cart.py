@@ -12,3 +12,11 @@ class CartModel:
         return {'id': self.id,
                 'products_id': self.products_id,
                 'user_id': self.user_id}
+
+    def AddSaveDb(self): 
+        ConnectionSqlite.commit()
+        ConnectionSqlite.close()
+    
+    def DeleteSaveDb(self): 
+        ConnectionSqlite.commit()
+        ConnectionSqlite.close()

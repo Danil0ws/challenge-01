@@ -36,3 +36,11 @@ class UserModel:
         return {'id': self.id,
                 'email': self.email,
                 'name': self.name}
+
+    def AddSaveDb(self): 
+        self.ConnectionSqlite.commit()
+        self.ConnectionSqlite.close()
+    
+    def DeleteSaveDb(self): 
+        self.ConnectionSqlite.commit()
+        self.ConnectionSqlite.close()

@@ -36,3 +36,11 @@ class ProductModel:
         return {'id': self.id,
                 'amount': self.amount,
                 'price': self.price}
+
+    def AddSaveDb(self): 
+        self.ConnectionSqlite.commit()
+        ConnectionSqlite.close()
+    
+    def DeleteSaveDb(self): 
+        self.ConnectionSqlite.commit()
+        self.ConnectionSqlite.close()
