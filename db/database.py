@@ -3,7 +3,7 @@ import sqlite3
 
 def CreateDatabase(db_path):
     ConnectionSqlite = sqlite3.connect(db_path)
-    cursorSqlite = ConnectionSqlite.cursorSqlite()
+    cursorSqlite = ConnectionSqlite.cursor()
 
     CreateUserTable = '{}{}{}'.format(
         'CREATE TABLE IF NOT EXISTS',
@@ -21,10 +21,10 @@ def CreateDatabase(db_path):
 
     cursorSqlite.execute(CreateProductTable)
 
-    CreateCouponTable = '{}{}{}{}'.format(
+    CreateCouponTable = '{}{}{}'.format(
         'CREATE TABLE IF NOT EXISTS',
         ' coupons(id INTEGER PRIMARY KEY,',
-        ' active INTEGER, type INTEGER NOT NULL, code INTEGER NOT NULL, value INTEGER NOT NULL);'
+        ' active INTEGER, type text NOT NULL, code text NOT NULL, value INTEGER NOT NULL);'
     )
 
     cursorSqlite.execute(CreateCouponTable)
@@ -36,7 +36,7 @@ def CreateDatabase(db_path):
         '  FOREIGN KEY (products_id) REFERENCES products(id), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (cupon_id) REFERENCES cupons(id));'
     )
 
-    cursorSqlite.execute(CreateCartTable)    
+    cursorSqlite.execute(CreateCartTable)
 
     cursorSqlite.execute(
         'INSERT OR REPLACE INTO users VALUES(1, "admin@exemple.com", "admin");')
@@ -51,7 +51,7 @@ def CreateDatabase(db_path):
         'INSERT OR REPLACE INTO products VALUES(4, "Smartwatch", 10, 580.99);')
 
     cursorSqlite.execute(
-        'INSERT OR REPLACE INTO coupons VALUES(1, true, "percentage", 10);')
+        'INSERT OR REPLACE INTO coupons VALUES(1, true, "percentage", "FIRST", 10);')
 
     ConnectionSqlite.commit()
 
