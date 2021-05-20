@@ -1,0 +1,182 @@
+swagger: '2.0'
+info:
+  description: Challenge for loja integrada API for cart in pyhton
+  version: 1.0.0
+  title: API de Carrinho
+  # put the contact info for your development or API team
+  contact:
+    email: you@your-company.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: Products
+  description: Operations available to regular developers
+- name: Users
+  description: Operations available to regular developers
+- name: Cupons
+  description: Operations available to regular developers
+- name: Cart
+  description: Operations available to regular developers
+paths:
+  /users:
+    get:
+      summary: Returns details of a users.
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        404:     
+          description: OK
+  /users/{userId}:
+    get:
+      summary: Returns a user by ID.
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          type: integer
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+  /users:
+    post:
+      summary: Creates a new user.
+      tags:
+        - Users
+      parameters:
+        - in: body
+          name: user
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: OK
+  /users/{userId}:
+    delete:
+      summary: Creates a new user.
+      tags:
+        - Users
+      parameters:
+        - in: body
+          name: user
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: OK
+  /users/{userId}:
+    put:
+      summary: Creates a new user.
+      tags:
+        - Users
+      parameters:
+        - in: body
+          name: user
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: OK
+definitions:
+  ProductModel:
+    type: object
+    required:
+    - id
+    - name
+    - amount
+    - price
+    properties:
+      id:
+        type: string
+        format: id
+      name:
+        type: string
+        format: text
+      amount:
+        type: int32
+        format: number
+      price:
+        type: int32
+        format: number
+  UserModel:
+    type: object
+    required:
+    - id
+    - name
+    - amount
+    - price
+    properties:
+      id:
+        type: string
+        format: id
+      name:
+        type: string
+        format: text
+      amount:
+        type: int32
+        format: number
+      price:
+        type: int32
+        format: number
+  CouponModel:
+    type: object
+    required:
+    - id
+    - name
+    - amount
+    - price
+    properties:
+      id:
+        type: string
+        format: id
+      name:
+        type: string
+        format: text
+      amount:
+        type: int32
+        format: number
+      price:
+        type: int32
+        format: number
+  CartModel:
+    type: object
+    required:
+    - id
+    - name
+    - amount
+    - price
+    properties:
+      id:
+        type: string
+        format: id
+      name:
+        type: string
+        format: text
+      amount:
+        type: int32
+        format: number
+      price:
+        type: int32
+        format: number
+        
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /Danil0ws/challenge-01/1.0.0
+schemes:
+ - https

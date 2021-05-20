@@ -10,6 +10,9 @@ class UserModel:
         self.email = email
         self.name = name
 
+    def __repr__(self):
+        return str(self.id) + ", " + self.email + ", " + self.name
+
     @classmethod
     def FindById(cls, id):
         try:

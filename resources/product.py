@@ -5,20 +5,30 @@ parser = reqparse.RequestParser()
 
 
 class Product(Resource):
+    """Operations related to products."""
 
-    def get(self, id):
-        product = ProductModel.FindById(id)
-        if product:
-            return {'product': product.json()}, 200
-        return {'message': 'Product not found!'}, 404
+    def get(self, id=None):
+        """Returns details of a product."""
+        if id:
+            product = ProductModel.FindById(id)
+            if product:
+                return {'product': product.json()}, 200
+            return {'message': 'Product not found!'}, 404
+        else:
+            products = ProductModel.FindAll()
+            if products:
+                return {'products': [product.json() for product in products]}, 200
+            return {'message': 'Product not found!'}, 404
 
     def delete(self, id):
+        """Deletes product."""
         product = ProductModel.DeleteById(id)
         if product:
-            return {'message': "Product successfully delete"}, 200
+            return {'message': 'Product successfully delete'}, 200
         return {'message': 'Product not found!'}, 400
 
     def put(self, id):
+        """Updates a product."""
         parser.add_argument('name',
                             type=str,
                             required=True,
@@ -40,19 +50,8 @@ class Product(Resource):
             return {'message': 'Product successfully edited'}, 201
         return {'message': 'Product not edited!'}, 400
 
-
-class ProductList(Resource):
-
-    def get(self):
-        products = ProductModel.FindAll()
-        if products:
-            return {'products': [product.json() for product in products]}, 200
-        return {'message': 'Product not found!'}, 404
-
-
-class ProductRegister(Resource):
-
     def post(self):
+        """Creates a new product."""
         parser.add_argument('name',
                             type=str,
                             required=True,

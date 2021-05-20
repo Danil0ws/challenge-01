@@ -24,7 +24,7 @@ def CreateDatabase(db_path):
     CreateCouponTable = '{}{}{}'.format(
         'CREATE TABLE IF NOT EXISTS',
         ' coupons(id INTEGER PRIMARY KEY,',
-        ' active INTEGER, type text NOT NULL, code text NOT NULL, value INTEGER NOT NULL);'
+        ' active INTEGER, type text NOT NULL, code text NOT NULL, quantity INTEGER NOT NULL, value INTEGER NOT NULL);'
     )
 
     cursorSqlite.execute(CreateCouponTable)
@@ -32,8 +32,8 @@ def CreateDatabase(db_path):
     CreateCartTable = '{}{}{}{}'.format(
         'CREATE TABLE IF NOT EXISTS',
         ' carts(id INTEGER PRIMARY KEY,',
-        ' price FLOAT, products_id INTEGER NOT NULL, user_id INTEGER NOT NULL, cupon_id INTEGER NULL,',
-        '  FOREIGN KEY (products_id) REFERENCES products(id), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (cupon_id) REFERENCES cupons(id));'
+        ' quantity INTEGER NOT NULL, product_id INTEGER NOT NULL, user_id INTEGER NOT NULL, coupon_id INTEGER NULL,',
+        ' FOREIGN KEY (product_id) REFERENCES products(id), FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (coupon_id) REFERENCES coupon(id));'
     )
 
     cursorSqlite.execute(CreateCartTable)
@@ -51,7 +51,7 @@ def CreateDatabase(db_path):
         'INSERT OR REPLACE INTO products VALUES(4, "Smartwatch", 10, 580.99);')
 
     cursorSqlite.execute(
-        'INSERT OR REPLACE INTO coupons VALUES(1, true, "percentage", "FIRST", 10);')
+        'INSERT OR REPLACE INTO coupons VALUES(1, true, "percentage", "FIRST", 10, 10);')
 
     ConnectionSqlite.commit()
 

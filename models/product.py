@@ -11,6 +11,9 @@ class ProductModel:
         self.amount = amount
         self.price = price
 
+    def __repr__(self):
+        return str(self.id) + ", " + self.name + ", " + str(self.amount) + ", " + str(self.price)
+
     @classmethod
     def FindById(cls, id):
         try:

@@ -5,12 +5,16 @@ class CouponModel:
 
     db_path = './db/datacart.db'
 
-    def __init__(self, id, active, type, code, value):
+    def __init__(self, id, active, type, code, quantity, value):
         self.id = id
         self.active = active
         self.type = type
         self.code = code
+        self.quantity = quantity
         self.value = value
+
+    def __repr__(self):
+        return str(self.id) + ", " + str(self.active) + ", " + self.type + ", " + self.code + ", " + str(self.quantity) + ", " + str(self.value)
 
     @classmethod
     def FindById(cls, id):
@@ -22,7 +26,7 @@ class CouponModel:
             RowsCouponByIdAll = ResultCouponById.fetchall()
             for Row in RowsCouponByIdAll:
                 CouponByIdAll = CouponModel(
-                    Row[0], Row[1], Row[2], Row[3], Row[4])
+                    Row[0], Row[1], Row[2], Row[3], Row[4], Row[5])
                 ConnectionSqlite.close()
                 return CouponByIdAll
         except sqlite3.Error as er:
@@ -48,7 +52,7 @@ class CouponModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultUpdateCoupon = CursorSqlite.execute(
-                'UPDATE coupons SET active = ?, type = ?, code = ?, value = ? WHERE id=?;', (body.active, body.type, body.code, body.value, id))
+                'UPDATE coupons SET active = ?, type = ?, code = ?, quantity = ?, value = ? WHERE id=?;', (body.active, body.type, body.code, body.quantity, body.value, id))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateCoupon.rowcount:
@@ -62,7 +66,7 @@ class CouponModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultInsertCoupon = CursorSqlite.execute(
-                'INSERT INTO coupons VALUES(NULL, ?, ?, ?, ?)', (body.active, body.type, body.code, body.value))
+                'INSERT INTO coupons VALUES(NULL, ?, ?, ?, ?, ?)', (body.active, body.type, body.code, body.quantity, body.value))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertCoupon.rowcount:
@@ -80,7 +84,7 @@ class CouponModel:
             RowsCouponAll = ResultCouponAll.fetchall()
             for Row in RowsCouponAll:
                 CouponList.append(CouponModel(
-                    Row[0], Row[1], Row[2], Row[3], Row[4]))
+                    Row[0], Row[1], Row[2], Row[3], Row[4], Row[5]))
             ConnectionSqlite.close()
             return CouponList
         except sqlite3.Error as er:
@@ -91,4 +95,5 @@ class CouponModel:
                 'active': self.active,
                 'type': self.type,
                 'code': self.code,
+                'quantity': self.quantity,
                 'value': self.value}
