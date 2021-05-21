@@ -1,5 +1,6 @@
 from models.user import UserModel
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
+from flask_expects_json import expects_json
 
 
 parser = reqparse.RequestParser()
@@ -28,38 +29,29 @@ class User(Resource):
             return {'message': 'User successfully delete'}, 200
         return {'message': 'User not found!'}, 400
 
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'email': {'type': 'string'},
+            'name': {'type': 'string'}
+        }
+    })
     def put(self, user_id):
         """Updates a user."""
-        parser.add_argument('email',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
+        data_payload = request.get_json()
+        return userReturn
 
-        parser.add_argument('name',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
 
-        data_payload = parser.parse_args()
-        user = UserModel.UpdateById(id, data_payload)
-        if user:
-            return {'message': 'User successfully edited'}, 201
-        return {'message': 'User not edited!'}, 400
-
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'email': {'type': 'string'},
+            'name': {'type': 'string'}
+        },
+        'required': ['name', 'name']
+    })
     def post(self):
         """Creates a new user."""
-        parser.add_argument('email',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('name',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        data_payload = parser.parse_args()
-        user = UserModel.InsertData(data_payload)
-        if user:
-            return {'message': 'User successfully created'}, 201
-        return {'message': 'User not created!'}, 400
+        data_payload = request.get_json()
+        userReturn = UserModel.InsertData(data_payload)
+        return userReturn

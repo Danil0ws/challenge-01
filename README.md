@@ -1,6 +1,6 @@
 # Technical challenge Loja Integrada! - Cart API
 
-Create a cart API, written in Python + Flask + SqlLite + UniTest.
+Create a cart API, written in Python + Flask + SqlLite + UnitTest.
 
 ## Quick Overview
 

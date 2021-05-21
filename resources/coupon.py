@@ -1,5 +1,6 @@
 from models.coupon import CouponModel
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
+from flask_expects_json import expects_json
 
 parser = reqparse.RequestParser()
 
@@ -27,68 +28,35 @@ class Coupon(Resource):
             return {'message': 'Coupon successfully delete'}, 200
         return {'message': 'Coupon not found!'}, 400
 
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'active': {'type': 'string'},
+            'type': {'type': 'string'},
+            'code': {'type': 'integer'},
+            'quantity': {'type': 'integer'},
+            'value': {'type': 'integer'}
+        }
+    })
     def put(self, id):
         """Updates a coupon."""
-        parser.add_argument('active',
-                            type=bool,
-                            required=True,
-                            help='This field is required!')
+        data_payload = request.get_json()
+        couponReturn = CouponModel.UpdateById(id, data_payload)
+        return couponReturn
 
-        parser.add_argument('type',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('code',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('quantity',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('value',
-                            type=int,
-                            required=True,
-                            help='This field is required!')
-
-        data_payload = parser.parse_args()
-        coupon = CouponModel.UpdateById(id, data_payload)
-        if coupon:
-            return {'message': 'Coupon successfully edited'}, 20
-        return {'message': 'Coupon not edited!'}, 404
-
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'active': {'type': 'string'},
+            'type': {'type': 'string'},
+            'code': {'type': 'integer'},
+            'quantity': {'type': 'integer'},
+            'value': {'type': 'integer'}
+        },
+        'required': ['active', 'type', 'code', 'quantity', 'value']
+    })
     def post(self):
         """Creates a new coupon."""
-        parser.add_argument('active',
-                            type=bool,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('type',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('code',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('quantity',
-                            type=int,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('value',
-                            type=int,
-                            required=True,
-                            help='This field is required!')
-
-        data_payload = parser.parse_args()
-        coupon = CouponModel.InsertData(data_payload)
-        if coupon:
-            return {'message': 'Coupon successfully created'}, 201
-        return {'message': 'Coupon not created!'}, 400
+        data_payload = request.get_json()
+        couponReturn = CouponModel.InsertData(data_payload)
+        return couponReturn

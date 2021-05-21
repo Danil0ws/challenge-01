@@ -1,43 +1,67 @@
 swagger: '2.0'
 info:
-  description: Challenge for loja integrada API for cart in pyhton
+  description: Create a cart API, written in Python + Flask + SqlLite + UnitTest.
   version: 1.0.0
-  title: API de Carrinho
-  # put the contact info for your development or API team
+  title: Technical challenge Loja Integrada! - Cart API
   contact:
-    email: you@your-company.com
+    email: mydanilows@gmail.com
 
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-
-# tags are used for organizing operations
 tags:
 - name: Products
-  description: Operations available to regular developers
+  description: Operations related to products
 - name: Users
   description: Operations available to regular developers
 - name: Cupons
   description: Operations available to regular developers
-- name: Cart
+- name: Carts
   description: Operations available to regular developers
 paths:
+  /products:
+    get:
+      summary: Returns details of a product.
+      tags:
+        - Users
+      responses:
+        200:
+          description: OK
+        404:     
+          description: Product not found
+    post:
+      summary: Returns details of a product.
+      description: __
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Users
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/Products'
+      responses:
+        201:
+          description: Product successfully created
+        404:     
+          description: Product not created
+        405:     
+          description: Validation exception
   /users:
     get:
       summary: Returns details of a users.
       tags:
         - Users
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          type: integer
       responses:
         200:
           description: OK
-          schema:
-            $ref: '#/definitions/User'
         404:     
+          description: OK
+    post:
+      summary: Creates a new user.
+      tags:
+        - Users
+      responses:
+        200:
           description: OK
   /users/{userId}:
     get:
@@ -52,49 +76,20 @@ paths:
       responses:
         200:
           description: OK
-          schema:
-            $ref: '#/definitions/User'
-  /users:
-    post:
-      summary: Creates a new user.
-      tags:
-        - Users
-      parameters:
-        - in: body
-          name: user
-          schema:
-            $ref: '#/definitions/User'
-      responses:
-        200:
-          description: OK
-  /users/{userId}:
     delete:
-      summary: Creates a new user.
+      summary: Deletes a user.
       tags:
         - Users
       parameters:
-        - in: body
-          name: user
-          schema:
-            $ref: '#/definitions/User'
-      responses:
-        200:
-          description: OK
-  /users/{userId}:
-    put:
-      summary: Creates a new user.
-      tags:
-        - Users
-      parameters:
-        - in: body
-          name: user
-          schema:
-            $ref: '#/definitions/User'
+        - in: path
+          name: userId
+          required: true
+          type: integer
       responses:
         200:
           description: OK
 definitions:
-  ProductModel:
+  Products:
     type: object
     required:
     - id
@@ -109,74 +104,14 @@ definitions:
         type: string
         format: text
       amount:
-        type: int32
+        type: integer
         format: number
       price:
-        type: int32
+        type: integer
         format: number
-  UserModel:
-    type: object
-    required:
-    - id
-    - name
-    - amount
-    - price
-    properties:
-      id:
-        type: string
-        format: id
-      name:
-        type: string
-        format: text
-      amount:
-        type: int32
-        format: number
-      price:
-        type: int32
-        format: number
-  CouponModel:
-    type: object
-    required:
-    - id
-    - name
-    - amount
-    - price
-    properties:
-      id:
-        type: string
-        format: id
-      name:
-        type: string
-        format: text
-      amount:
-        type: int32
-        format: number
-      price:
-        type: int32
-        format: number
-  CartModel:
-    type: object
-    required:
-    - id
-    - name
-    - amount
-    - price
-    properties:
-      id:
-        type: string
-        format: id
-      name:
-        type: string
-        format: text
-      amount:
-        type: int32
-        format: number
-      price:
-        type: int32
-        format: number
-        
-# Added by API Auto Mocking Plugin
-host: virtserver.swaggerhub.com
+   
+# host: Danil0ws.swaggerhub.com
 basePath: /Danil0ws/challenge-01/1.0.0
 schemes:
  - https
+host: Danil0ws.swaggerhub.com

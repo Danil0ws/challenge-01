@@ -86,9 +86,11 @@ class CouponModel:
                 CouponList.append(CouponModel(
                     Row[0], Row[1], Row[2], Row[3], Row[4], Row[5]))
             ConnectionSqlite.close()
-            return CouponList
+            if CouponList.count()>=0:
+                return CouponList                
+            return {'code': 400, 'message': 'Coupon not found'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Coupon not found'}, 400
 
     def json(self):
         return {'id': self.id,

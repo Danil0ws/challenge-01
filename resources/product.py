@@ -1,5 +1,6 @@
 from models.product import ProductModel
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
+from flask_expects_json import expects_json
 
 parser = reqparse.RequestParser()
 
@@ -25,50 +26,34 @@ class Product(Resource):
         product = ProductModel.DeleteById(id)
         if product:
             return {'message': 'Product successfully delete'}, 200
-        return {'message': 'Product not found!'}, 400
+        return {'message': 'Product not found'}, 400
 
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'name': {'type': 'string'},
+            'quantity': {'type': 'integer'},
+            'price': {'type': 'integer'}
+        },
+        'required': ['name', 'quantity', 'price']
+    })
     def put(self, id):
         """Updates a product."""
-        parser.add_argument('name',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
+        data_payload = request.get_json()
+        productReturn = ProductModel.UpdateById(id, data_payload)
+        return productReturn
 
-        parser.add_argument('amount',
-                            type=int,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('price',
-                            type=int,
-                            required=True,
-                            help='This field is required!')
-
-        data_payload = parser.parse_args()
-        product = ProductModel.UpdateById(id, data_payload)
-        if product:
-            return {'message': 'Product successfully edited'}, 201
-        return {'message': 'Product not edited!'}, 400
-
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'name': {'type': 'string'},
+            'quantity': {'type': 'integer'},
+            'price': {'type': 'integer'}
+        },
+        'required': ['name', 'quantity', 'price']
+    })
     def post(self):
         """Creates a new product."""
-        parser.add_argument('name',
-                            type=str,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('amount',
-                            type=int,
-                            required=True,
-                            help='This field is required!')
-
-        parser.add_argument('price',
-                            type=int,
-                            required=True,
-                            help='This field is required!')
-
-        data_payload = parser.parse_args()
-        product = ProductModel.InsertData(data_payload)
-        if product:
-            return {'message': 'Product successfully created'}, 201
-        return {'message': 'Product not created!'}, 400
+        data_payload = request.get_json()
+        productReturn = ProductModel.InsertData(data_payload)
+        return productReturn

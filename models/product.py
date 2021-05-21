@@ -26,8 +26,9 @@ class ProductModel:
                 ProductByIdAll = ProductModel(Row[0], Row[1], Row[2], Row[3])
                 ConnectionSqlite.close()
                 return ProductByIdAll
+            return {'code': 400, 'message': 'Product not found'}, 400    
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Product not found'}, 400
 
     @classmethod
     def DeleteById(cls, id):
@@ -39,9 +40,10 @@ class ProductModel:
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultDeleteProduct.rowcount:
-                return ResultDeleteProduct.rowcount
+                return {'code': 200, 'message': 'Product successfully delete'}, 200
+            return {'code': 400, 'message': 'Product not found'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Product not found'}, 400
 
     @classmethod
     def UpdateById(cls, id, body):
@@ -49,13 +51,14 @@ class ProductModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultUpdateProduct = CursorSqlite.execute(
-                'UPDATE products SET name = ?, quantity = ?, price = ? WHERE id=?;', (body.name, body.quantity, body.price, id))
+                'UPDATE products SET name = ?, quantity = ?, price = ? WHERE id=?;', (str(body['name']), int(body['quantity']), int(body['price']), id))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateProduct.rowcount:
-                return ResultUpdateProduct.rowcount
+                return {'code': 201, 'message': 'Product successfully edited'}, 201
+            return {'code': 400, 'message': 'Product not edited'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Product not edited'}, 400
 
     @classmethod
     def InsertData(cls, body):
@@ -63,13 +66,14 @@ class ProductModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultInsertProduct = CursorSqlite.execute(
-                'INSERT INTO products VALUES(NULL, ?, ?, ?)', (body.name, body.quantity, body.price))
+                'INSERT INTO products VALUES(NULL, ?, ?, ?)', (str(body['name']), int(body['quantity']), int(body['price'])))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertProduct.rowcount:
-                return ResultInsertProduct.rowcount
+                return {'code': 201, 'message': 'Product successfully created'}, 201
+            return {'code': 400, 'message': 'Product not created'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Product not created'}, 400
 
     @classmethod
     def FindAll(cls):
@@ -83,9 +87,11 @@ class ProductModel:
                 ProductList.append(ProductModel(
                     Row[0], Row[1], Row[2], Row[3]))
             ConnectionSqlite.close()
-            return ProductList
+            if ProductList.count()>=0:
+                return ProductList                
+            return {'code': 400, 'message': 'Product not found'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Product not found'}, 400
 
     def json(self):
         return {'id': self.id,

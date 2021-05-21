@@ -52,9 +52,10 @@ class UserModel:
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateUser.rowcount:
-                return ResultUpdateUser.rowcount
+                return {'code': 201, 'message': 'User successfully edited'}, 201
+            return {'code': 400, 'message': 'User not edited'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Product not edited'}, 400
 
     @classmethod
     def InsertData(cls, body):
@@ -66,9 +67,10 @@ class UserModel:
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertUser.rowcount:
-                return ResultInsertUser.rowcount
+                return {'code': 201, 'message': 'User successfully created'}, 201
+            return {'code': 400, 'message': 'User not created'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'User not created'}, 400
 
     @classmethod
     def FindAll(cls):
@@ -81,9 +83,11 @@ class UserModel:
             for Row in RowsUsersAll:
                 UsersList.append(UserModel(Row[0], Row[1], Row[2]))
             ConnectionSqlite.close()
-            return UsersList
+            if UsersList.count()>=0:
+                return UsersList                
+            return {'code': 400, 'message': 'User not found'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'User not found'}, 400
 
     def json(self):
         return {'id': self.id,

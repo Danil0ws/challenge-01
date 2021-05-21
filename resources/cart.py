@@ -37,7 +37,7 @@ class Cart(Resource):
             carts = CartModel.DeleteById(user_id)
             if carts:
                 return {'message': 'Cart successfully delete'}, 200
-            return {'message': 'Cart not found!'}, 404
+            return {'message': 'Cart not found'}, 404
 
     def put(self, user_id, product_id, coupon_id=None):
         """Updates a cart."""
