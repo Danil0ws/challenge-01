@@ -5,14 +5,14 @@ class ProductModel:
 
     db_path = './db/datacart.db'
 
-    def __init__(self, id, name, amount, price):
+    def __init__(self, id, name, quantity, price):
         self.id = id
         self.name = name
-        self.amount = amount
+        self.quantity = quantity
         self.price = price
 
     def __repr__(self):
-        return str(self.id) + ", " + self.name + ", " + str(self.amount) + ", " + str(self.price)
+        return str(self.id) + ", " + self.name + ", " + str(self.quantity) + ", " + str(self.price)
 
     @classmethod
     def FindById(cls, id):
@@ -49,7 +49,7 @@ class ProductModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultUpdateProduct = CursorSqlite.execute(
-                'UPDATE products SET name = ?, amount = ?, price = ? WHERE id=?;', (body.name, body.amount, body.price, id))
+                'UPDATE products SET name = ?, quantity = ?, price = ? WHERE id=?;', (body.name, body.quantity, body.price, id))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateProduct.rowcount:
@@ -63,7 +63,7 @@ class ProductModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultInsertProduct = CursorSqlite.execute(
-                'INSERT INTO products VALUES(NULL, ?, ?, ?)', (body.name, body.amount, body.price))
+                'INSERT INTO products VALUES(NULL, ?, ?, ?)', (body.name, body.quantity, body.price))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertProduct.rowcount:
@@ -90,5 +90,5 @@ class ProductModel:
     def json(self):
         return {'id': self.id,
                 'name': self.name,
-                'amount': self.amount,
+                'quantity': self.quantity,
                 'price': self.price}

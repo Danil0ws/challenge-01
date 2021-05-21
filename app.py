@@ -12,7 +12,8 @@ api.add_resource(User, '/users', '/users/<int:id>')
 api.add_resource(Product, '/products', '/products/<int:id>')
 api.add_resource(Coupon, '/coupons', '/coupons/<int:id>')
 api.add_resource(Cart, '/carts', '/carts/<int:user_id>',
-                 '/carts/<int:user_id>/products/<int:product_id>')
+                 '/carts/<int:user_id>/products/<int:product_id>',
+                 '/carts/<int:user_id>/coupons/<int:coupon_id>')
 
 
 @app.errorhandler(404)

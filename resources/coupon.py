@@ -44,6 +44,11 @@ class Coupon(Resource):
                             required=True,
                             help='This field is required!')
 
+        parser.add_argument('quantity',
+                            type=str,
+                            required=True,
+                            help='This field is required!')
+
         parser.add_argument('value',
                             type=int,
                             required=True,
@@ -69,6 +74,11 @@ class Coupon(Resource):
 
         parser.add_argument('code',
                             type=str,
+                            required=True,
+                            help='This field is required!')
+
+        parser.add_argument('quantity',
+                            type=int,
                             required=True,
                             help='This field is required!')
 
