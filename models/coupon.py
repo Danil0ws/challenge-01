@@ -21,16 +21,19 @@ class CouponModel:
         try:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
-            ResultCouponById = CursorSqlite.execute(
+            ResultCouponsById = CursorSqlite.execute(
                 'SELECT * FROM coupons WHERE id=?', (id,))
-            RowsCouponByIdAll = ResultCouponById.fetchall()
-            for Row in RowsCouponByIdAll:
-                CouponByIdAll = CouponModel(
+            RowsCouponsByIdAll = ResultCouponsById.fetchall()
+            if RowsCouponsByIdAll is None:
+                return {'code': 400, 'message': "Coupon id not found"}
+            for Row in RowsCouponsByIdAll:
+                CouponsByIdAll = CouponModel(
                     Row[0], Row[1], Row[2], Row[3], Row[4], Row[5])
                 ConnectionSqlite.close()
-                return CouponByIdAll
+                return {'code': 200, 'coupon': CouponsByIdAll.json()}, 200
+            return {'code': 400, 'message': 'Coupon not edited'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Coupon not edited'}, 400
 
     @classmethod
     def DeleteById(cls, id):
@@ -42,9 +45,10 @@ class CouponModel:
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultDeleteCoupon.rowcount:
-                return ResultDeleteCoupon.rowcount
+                return {'code': 200, 'message': 'Coupon successfully delete'}, 200
+            return {'code': 400, 'message': 'Coupon not delete'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Coupon not delete'}, 400
 
     @classmethod
     def UpdateById(cls, id, body):
@@ -52,13 +56,14 @@ class CouponModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultUpdateCoupon = CursorSqlite.execute(
-                'UPDATE coupons SET active = ?, type = ?, code = ?, quantity = ?, value = ? WHERE id=?;', (body.active, body.type, body.code, body.quantity, body.value, id))
+                'UPDATE coupons SET active = ?, type = ?, code = ?, quantity = ?, value = ? WHERE id=?;', (int(body['active']), str(body['type']), str(body['code']), int(body['quantity']), int(body['value']), id))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateCoupon.rowcount:
-                return ResultUpdateCoupon.rowcount
+                return {'code': 201, 'message': 'Coupon successfully edited'}, 200
+            return {'code': 400, 'message': 'Coupon not edited'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Coupon not edited'}, 400
 
     @classmethod
     def InsertData(cls, body):
@@ -66,28 +71,29 @@ class CouponModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultInsertCoupon = CursorSqlite.execute(
-                'INSERT INTO coupons VALUES(NULL, ?, ?, ?, ?, ?)', (body.active, body.type, body.code, body.quantity, body.value))
+                'INSERT INTO coupons VALUES(NULL, ?, ?, ?, ?, ?)', (int(body['active']), str(body['type']), str(body['code']), int(body['quantity']), int(body['value'])))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertCoupon.rowcount:
-                return ResultInsertCoupon.rowcount
+                return {'code': 201, 'message': 'Coupon successfully created'}, 201
+            return {'code': 400, 'message': 'Coupon not created'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Coupon not created'}, 400
 
     @classmethod
     def FindAll(cls):
         try:
-            CouponList = list()
+            CouponsList = list()
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
-            ResultCouponAll = CursorSqlite.execute('SELECT * FROM coupons')
-            RowsCouponAll = ResultCouponAll.fetchall()
-            for Row in RowsCouponAll:
-                CouponList.append(CouponModel(
+            ResultCouponsAll = CursorSqlite.execute('SELECT * FROM coupons')
+            RowsCouponsAll = ResultCouponsAll.fetchall()
+            for Row in RowsCouponsAll:
+                CouponsList.append(CouponModel(
                     Row[0], Row[1], Row[2], Row[3], Row[4], Row[5]))
             ConnectionSqlite.close()
-            if CouponList.count()>=0:
-                return CouponList                
+            if len(CouponsList) >= 0:
+                return {'code': 200, 'coupons': [coupon.json() for coupon in CouponsList]}, 200
             return {'code': 400, 'message': 'Coupon not found'}, 400
         except sqlite3.Error as er:
             return {'code': 400, 'message': 'Coupon not found'}, 400

@@ -19,42 +19,33 @@ class CartModel:
 
     @classmethod
     def FindById(cls, user_id):
-        # try:
-        #     CartList = list()
-        #     ConnectionSqlite = sqlite3.connect(cls.db_path)
-        #     CursorSqlite = ConnectionSqlite.cursor()
-        #     ResultCartById = CursorSqlite.execute(
-        #         'SELECT * FROM carts WHERE user_id=?', (user_id,))
-        #     RowsCartByIdAll = ResultCartById.fetchall()
-        #     for Row in RowsCartByIdAll:
-        #         ProductByIdStr = str(ProductModel.FindById(Row[2]))
-        #         ProductByIdSplit = ProductByIdStr.split(",")
-        #         if Row[4] is None:
-        #             CartList.append(CartModel(
-        #                 Row[0], Row[1], ProductModel(
-        #                     ProductByIdSplit[0], ProductByIdSplit[1],  ProductByIdSplit[2], ProductByIdSplit[3]).json(), Row[3], Row[4]))
-        #         else:
-        #             CouponByIdStr = str(CouponModel.FindById(Row[4]))
-        #             CouponByIdSplit = CouponByIdStr.split(",")
-        #             CartList.append(CartModel(
-        #                 Row[0], Row[1], ProductModel(
-        #                     ProductByIdSplit[0], ProductByIdSplit[1],  ProductByIdSplit[2], ProductByIdSplit[3]).json(), Row[3], CouponModel(
-        #                     CouponByIdSplit[0], CouponByIdSplit[1],  CouponByIdSplit[2], CouponByIdSplit[3], CouponByIdSplit[4], CouponByIdSplit[5]).json()))
-
-        #     ConnectionSqlite.close()
-        #     return CartList
-        # except sqlite3.Error as er:
-        #     return False
+        Coupon = None
+        ConnectionSqlite = sqlite3.connect(cls.db_path)
+        CursorSqlite = ConnectionSqlite.cursor()
+        ResultCartById = CursorSqlite.execute(
+            'SELECT * FROM carts WHERE user_id=?', (user_id,))
+        RowsCartById = ResultCartById.fetchall()
+        for Row in RowsCartById:
+            GetProductById = CartModel.FindByProductId(Row[0])
+            GetCouponById = CartModel.FindByCouponId(Row[0])
+            # print(GetProductById)
+            # print(GetCouponById)
+            # GetProductById = CartModel.FindByProductId(Row[0])
+            # GetCouponById = CartModel.FindByCouponId(Row[0])
+            # ProductList.append(GetProductById[0]['product'])
+            # GetProductById[0]['product']
+        # print(ProductList)
         return False
 
     @classmethod
     def FindAll(cls):
         # try:
-        #     CartList = list()
-        #     ConnectionSqlite = sqlite3.connect(cls.db_path)
-        #     CursorSqlite = ConnectionSqlite.cursor()
-        #     ResultCartAll = CursorSqlite.execute('SELECT * FROM carts_product')
-        #     RowsCartAll = ResultCartAll.fetchall()
+        CartList = list()
+        ConnectionSqlite = sqlite3.connect(cls.db_path)
+        CursorSqlite = ConnectionSqlite.cursor()
+        ResultCartAll = CursorSqlite.execute('SELECT * FROM carts')
+        RowsCartAll = ResultCartAll.fetchall()
+        print(RowsCartAll)
         #     print(RowsCartAll)
         #     # for Row in RowsCartAll:
         #     #     CartList.append(CartModel(
@@ -85,17 +76,16 @@ class CartModel:
         CartList = list()
         for Row in body['products']:
             CartInsertList = CartModel.InsertByProductId(
-                CartId, str(Row['id']), str(Row['quantity']))
+                CartId['message'], str(Row['id']), str(Row['quantity']))
             if CartInsertList['status'] is False:
-                return {'code': 401, 'message': CartInsertList['message']}, 401
+                return {'code': 400, 'message': CartInsertList['message']}, 400
             CartList.append(CartInsertList)
         CouponId = None
         if body['coupon_code'] is not None:
             CouponId = CartModel.InsertByCouponId(
-                CartId, str(body['coupon_code']))
+                CartId['message'], str(body['coupon_code']))
             if CouponId['status'] is False:
-                return {'code': 401, 'message': CouponId['message']}, 401
-
+                return {'code': 400, 'message': CouponId['message']}, 400
         return {'code': 201, 'message': 'Cart successfully created'}, 201
 
     def DeleteByCartId(cls, id):
@@ -135,10 +125,10 @@ class CartModel:
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateCart.rowcount:
-                return ResultUpdateCart.rowcount
-            return False
+                return {'code': 200, 'message': 'Coupon successfully delete'}, 200
+            return {'code': 400, 'message': 'Coupon not delete'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Coupon not delete'}, 400
 
     def InsertByCartId(user_id):
         try:
@@ -149,9 +139,10 @@ class CartModel:
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertCart.rowcount:
-                return ResultInsertCart.lastrowid
+                return {'code': 200, 'message': ResultInsertCart.lastrowid}
+            return {'code': 400, 'message': 'Cart not created'}
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'Cart not created'}
 
     def InsertByProductId(cart_id, product_id, product_quantity):
         try:
@@ -169,6 +160,7 @@ class CartModel:
                 return {'status': True}
             return {'status': False, 'message': 'Cart not created'}
         except sqlite3.Error as er:
+            print(CheckProductQuantity)
             return {'status': False, 'message': CheckProductQuantity['message']}
 
     def InsertByCouponId(cart_id, coupon_code):
@@ -222,6 +214,34 @@ class CartModel:
             return {'status': False, 'message': "Coupon out of stock"}
         except sqlite3.Error as er:
             return {'status': False, 'message': "Coupon not available"}
+
+    def FindByProductId(cart_id):
+        ConnectionSqlite = sqlite3.connect(cls.db_path)
+        CursorSqlite = ConnectionSqlite.cursor()
+        ResultCartProductById = CursorSqlite.execute(
+            'SELECT * FROM carts_product WHERE cart_id=?', (cart_id,))
+        RowsCartProductById = ResultCartProductById.fetchall()
+        if len(RowsCartProductById) == 0:
+            return False
+        ProductList = list()
+        for Row in RowsCartProductById:
+            GetProductById = ProductModel.FindById(Row[2])
+            GetProductById[0]['product']['quantity'] = Row[3]
+            ProductList.append(GetProductById[0]['product'])
+        return ProductList
+
+    def FindByCouponId(cart_id):
+        ConnectionSqlite = sqlite3.connect(cls.db_path)
+        CursorSqlite = ConnectionSqlite.cursor()
+        ResultCartCouponById = CursorSqlite.execute(
+            'SELECT * FROM carts_coupon WHERE cart_id=?', (cart_id,))
+        RowsCartCouponById = ResultCartCouponById.fetchall()
+        if len(RowsCartCouponById) == 0:
+            return False
+        for Row in RowsCartCouponById:
+            GetCouponById = CouponModel.FindById(Row[2])
+            return GetCouponById[0]['coupon']
+        return False
 
     def json(self):
         return {'id': self.id,

@@ -3,4 +3,4 @@
 __pycache__/
 db/datacart.db
 .vscode
-venv
+env

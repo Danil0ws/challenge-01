@@ -69,7 +69,9 @@ def CreateDatabase(db_path):
         'INSERT OR REPLACE INTO products VALUES(4, "Smartwatch", 10, 580.99);')
 
     cursorSqlite.execute(
-        'INSERT OR REPLACE INTO coupons VALUES(1, true, "percentage", "okok", 10, 10);')
+        'INSERT OR REPLACE INTO coupons VALUES(1, true, "percentage", "TEN10", 10, 10);')
+    cursorSqlite.execute(
+        'INSERT OR REPLACE INTO coupons VALUES(2, true, "fixed", "FIVE", 10, 5);')
 
     ConnectionSqlite.commit()
 

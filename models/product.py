@@ -25,8 +25,8 @@ class ProductModel:
             for Row in RowsProductByIdAll:
                 ProductByIdAll = ProductModel(Row[0], Row[1], Row[2], Row[3])
                 ConnectionSqlite.close()
-                return ProductByIdAll
-            return {'code': 400, 'message': 'Product not found'}, 400    
+                return {'code': 200, 'product': ProductByIdAll.json()}, 200
+            return {'code': 400, 'message': 'Product not found'}, 400
         except sqlite3.Error as er:
             return {'code': 400, 'message': 'Product not found'}, 400
 
@@ -87,8 +87,8 @@ class ProductModel:
                 ProductList.append(ProductModel(
                     Row[0], Row[1], Row[2], Row[3]))
             ConnectionSqlite.close()
-            if ProductList.count()>=0:
-                return ProductList                
+            if len(ProductList) >= 0:
+                return {'code': 200, 'products': [product.json() for product in ProductList]}, 200
             return {'code': 400, 'message': 'Product not found'}, 400
         except sqlite3.Error as er:
             return {'code': 400, 'message': 'Product not found'}, 400

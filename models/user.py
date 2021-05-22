@@ -21,12 +21,15 @@ class UserModel:
             ResultUsersById = CursorSqlite.execute(
                 'SELECT * FROM users WHERE id=?', (id,))
             RowsUsersByIdAll = ResultUsersById.fetchall()
+            if RowsUsersByIdAll is None:
+                return {'code': 400, 'message': "User id not found"}
             for Row in RowsUsersByIdAll:
                 UsersByIdAll = UserModel(Row[0], Row[1], Row[2])
                 ConnectionSqlite.close()
-                return UsersByIdAll
+                return {'code': 200, 'user': UsersByIdAll.json()}, 200
+            return {'code': 400, 'message': 'User not edited'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'User not edited'}, 400
 
     @classmethod
     def DeleteById(cls, id):
@@ -38,9 +41,10 @@ class UserModel:
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultDeleteUser.rowcount:
-                return ResultDeleteUser.rowcount
+                return {'code': 200, 'message': 'User successfully delete'}, 200
+            return {'code': 400, 'message': 'User not delete'}, 400
         except sqlite3.Error as er:
-            return False
+            return {'code': 400, 'message': 'User not delete'}, 400
 
     @classmethod
     def UpdateById(cls, id, body):
@@ -48,14 +52,14 @@ class UserModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultUpdateUser = CursorSqlite.execute(
-                'UPDATE users SET email = ?, name = ? WHERE id=?;', (body.email, body.name, id))
+                'UPDATE users SET email = ?, name = ? WHERE id=?;', (str(body['email']), str(body['name']), id))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateUser.rowcount:
-                return {'code': 201, 'message': 'User successfully edited'}, 201
+                return {'code': 201, 'message': 'User successfully edited'}, 200
             return {'code': 400, 'message': 'User not edited'}, 400
         except sqlite3.Error as er:
-            return {'code': 400, 'message': 'Product not edited'}, 400
+            return {'code': 400, 'message': 'User not edited'}, 400
 
     @classmethod
     def InsertData(cls, body):
@@ -63,7 +67,7 @@ class UserModel:
             ConnectionSqlite = sqlite3.connect(cls.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultInsertUser = CursorSqlite.execute(
-                'INSERT INTO users VALUES(NULL, ?, ?)', (body.email, body.name))
+                'INSERT INTO users VALUES(NULL, ?, ?)', (str(body['email']), str(body['name'])))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertUser.rowcount:
@@ -83,8 +87,8 @@ class UserModel:
             for Row in RowsUsersAll:
                 UsersList.append(UserModel(Row[0], Row[1], Row[2]))
             ConnectionSqlite.close()
-            if UsersList.count()>=0:
-                return UsersList                
+            if len(UsersList) >= 0:
+                return {'code': 200, 'users': [user.json() for user in UsersList]}, 200
             return {'code': 400, 'message': 'User not found'}, 400
         except sqlite3.Error as er:
             return {'code': 400, 'message': 'User not found'}, 400

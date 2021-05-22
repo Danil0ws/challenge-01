@@ -12,35 +12,11 @@ class User(Resource):
     def get(self, id=None):
         """Returns details of a user."""
         if id:
-            user = UserModel.FindById(id)
-            if user:
-                return {'user': user.json()}, 200
-            return {'message': 'User not found!'}, 404
+            userReturn = UserModel.FindById(id)
+            return userReturn
         else:
-            users = UserModel.FindAll()
-            if users:
-                return {'users': [user.json() for user in users]}, 200
-            return {'message': 'User not found!'}, 404
-
-    def delete(self, id):
-        """Deletes user."""
-        user = UserModel.DeleteById(id)
-        if user:
-            return {'message': 'User successfully delete'}, 200
-        return {'message': 'User not found!'}, 400
-
-    @expects_json({
-        'type': 'object',
-        'properties': {
-            'email': {'type': 'string'},
-            'name': {'type': 'string'}
-        }
-    })
-    def put(self, user_id):
-        """Updates a user."""
-        data_payload = request.get_json()
-        return userReturn
-
+            userReturn = UserModel.FindAll()
+            return userReturn
 
     @expects_json({
         'type': 'object',
@@ -48,10 +24,29 @@ class User(Resource):
             'email': {'type': 'string'},
             'name': {'type': 'string'}
         },
-        'required': ['name', 'name']
+        'required': ['name', 'email']
     })
     def post(self):
         """Creates a new user."""
         data_payload = request.get_json()
         userReturn = UserModel.InsertData(data_payload)
+        return userReturn
+
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'email': {'type': 'string'},
+            'name': {'type': 'string'}
+        },
+        'required': ['name', 'email']
+    })
+    def put(self, id):
+        """Updates a user."""
+        data_payload = request.get_json()
+        userReturn = UserModel.UpdateById(id, data_payload)
+        return userReturn
+
+    def delete(self, id):
+        """Deletes user."""
+        userReturn = UserModel.DeleteById(id)
         return userReturn

@@ -11,29 +11,33 @@ class Product(Resource):
     def get(self, id=None):
         """Returns details of a product."""
         if id:
-            product = ProductModel.FindById(id)
-            if product:
-                return {'product': product.json()}, 200
-            return {'message': 'Product not found!'}, 404
+            productReturn = ProductModel.FindById(id)
+            return productReturn
         else:
-            products = ProductModel.FindAll()
-            if products:
-                return {'products': [product.json() for product in products]}, 200
-            return {'message': 'Product not found!'}, 404
-
-    def delete(self, id):
-        """Deletes product."""
-        product = ProductModel.DeleteById(id)
-        if product:
-            return {'message': 'Product successfully delete'}, 200
-        return {'message': 'Product not found'}, 400
+            productsReturn = ProductModel.FindAll()
+            return productsReturn
 
     @expects_json({
         'type': 'object',
         'properties': {
             'name': {'type': 'string'},
             'quantity': {'type': 'integer'},
-            'price': {'type': 'integer'}
+            'price': {'type': 'number'}
+        },
+        'required': ['name', 'quantity', 'price']
+    })
+    def post(self):
+        """Creates a new product."""
+        data_payload = request.get_json()
+        productReturn = ProductModel.InsertData(data_payload)
+        return productReturn
+
+    @expects_json({
+        'type': 'object',
+        'properties': {
+            'name': {'type': 'string'},
+            'quantity': {'type': 'integer'},
+            'price': {'type': 'number'}
         },
         'required': ['name', 'quantity', 'price']
     })
@@ -43,17 +47,7 @@ class Product(Resource):
         productReturn = ProductModel.UpdateById(id, data_payload)
         return productReturn
 
-    @expects_json({
-        'type': 'object',
-        'properties': {
-            'name': {'type': 'string'},
-            'quantity': {'type': 'integer'},
-            'price': {'type': 'integer'}
-        },
-        'required': ['name', 'quantity', 'price']
-    })
-    def post(self):
-        """Creates a new product."""
-        data_payload = request.get_json()
-        productReturn = ProductModel.InsertData(data_payload)
+    def delete(self, id):
+        """Deletes product."""
+        productReturn = ProductModel.DeleteById(id)
         return productReturn
