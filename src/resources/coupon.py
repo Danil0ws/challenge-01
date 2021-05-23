@@ -7,9 +7,13 @@ class Coupon(Resource):
     """Operations related to Coupons."""
 
     def get(self, id=None):
-        """Returns details of a coupon."""
+        """Returns details of a(all) coupon(s)."""
+        codeParams = request.args.get('code')
         if id:
             couponReturn = CouponModel.FindById(id)
+            return couponReturn
+        elif codeParams is not None:
+            couponReturn = CouponModel.FindByCode(codeParams)
             return couponReturn
         else:
             couponReturn = CouponModel.FindAll()
@@ -27,7 +31,7 @@ class Coupon(Resource):
         'required': ['active', 'type', 'code', 'quantity', 'value']
     })
     def post(self):
-        """Creates a new coupon."""
+        """Add a new coupon to the database."""
         data_payload = request.get_json()
         couponReturn = CouponModel.InsertData(data_payload)
         return couponReturn
@@ -43,7 +47,7 @@ class Coupon(Resource):
         }
     })
     def put(self, id):
-        """Updates a coupon."""
+        """Update an existing coupon."""
         data_payload = request.get_json()
         couponReturn = CouponModel.UpdateById(id, data_payload)
         return couponReturn

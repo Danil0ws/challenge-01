@@ -24,7 +24,7 @@ def CreateDatabase(db_path):
     CreateCouponTable = '{}{}{}'.format(
         'CREATE TABLE IF NOT EXISTS',
         ' coupons(id INTEGER PRIMARY KEY,',
-        ' active INTEGER, type text NOT NULL, code TEXT NOT NULL, quantity INTEGER NOT NULL, value INTEGER NOT NULL);'
+        ' active INTEGER, type text NOT NULL, code TEXT NOT NULL, quantity INTEGER NOT NULL, value FLOAT NOT NULL);'
     )
 
     cursorSqlite.execute(CreateCouponTable)
@@ -32,7 +32,7 @@ def CreateDatabase(db_path):
     CreateCartTable = '{}{}{}{}'.format(
         'CREATE TABLE IF NOT EXISTS',
         ' carts(id INTEGER PRIMARY KEY,',
-        ' user_id INTEGER NOT NULL,',
+        ' user_id INTEGER NOT NULL, active INTEGER NOT NULL,',
         ' FOREIGN KEY (user_id) REFERENCES users(id));'
     )
 

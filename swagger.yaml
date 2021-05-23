@@ -2,116 +2,953 @@ swagger: '2.0'
 info:
   description: Create a cart API, written in Python + Flask + SqlLite + UnitTest.
   version: 1.0.0
-  title: Technical challenge Loja Integrada! - Cart API
+  title: Technical challenge - Cart API
   contact:
     email: mydanilows@gmail.com
-
 tags:
-- name: Products
-  description: Operations related to products
-- name: Users
-  description: Operations available to regular developers
-- name: Cupons
-  description: Operations available to regular developers
-- name: Carts
-  description: Operations available to regular developers
+  - name: Products
+    description: Operations related to products
+  - name: Users
+    description: Operations related to users
+  - name: Coupons
+    description: Operations related to cupons
+  - name: Carts
+    description: Operations related to carts
 paths:
   /products:
     get:
-      summary: Returns details of a product.
+      summary: Returns details of all product.
+      tags:
+        - Products
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        400:     
+          description: Product not found
+    post:
+      summary: Add a new product to the database
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Products
+      parameters:
+        - in: body
+          description: Product object that needs to be added to the database
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ProductParameters'
+      responses:
+        201:
+          description: Product successfully created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:     
+          description: Product not created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /products/{productId}: 
+    get:
+      summary: Find product by ID
+      description: Returns a single product
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        201:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Product"
+        400:     
+          description: Product invalid ID
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Product not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    put:
+      summary: Update an existing product
+      description: Product object that needs to be added to the database
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/ProductParameters'
+      responses:
+        201:
+          description: Product successfully edited
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:     
+          description: Product Invalid ID supplied
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Product not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    delete:
+      summary: Deletes a product
+      description: Product object that needs to be added to the store
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Product successfully delete
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Product Invalid ID supplied
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:     
+          description: Product not edited
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /users:
+    get:
+      summary: Returns details of all user.
       tags:
         - Users
       responses:
         200:
-          description: OK
-        404:     
-          description: Product not found
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/User"
+        400:     
+          description: User not found
     post:
-      summary: Returns details of a product.
-      description: __
+      summary: Add a new user to the database
       consumes: ['application/json']
       produces: ['application/json']
       tags:
         - Users
       parameters:
         - in: body
+          description: User object that needs to be added to the database
           name: body
           required: true
           schema:
-            $ref: '#/definitions/Products'
+            $ref: '#/definitions/UserParameters'
       responses:
         201:
-          description: Product successfully created
-        404:     
-          description: Product not created
-        405:     
-          description: Validation exception
-  /users:
+          description: User successfully created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:     
+          description: User not created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /users/{userId}: 
     get:
-      summary: Returns details of a users.
-      tags:
-        - Users
-      responses:
-        200:
-          description: OK
-        404:     
-          description: OK
-    post:
-      summary: Creates a new user.
-      tags:
-        - Users
-      responses:
-        200:
-          description: OK
-  /users/{userId}:
-    get:
-      summary: Returns a user by ID.
+      summary: Find user by ID
+      description: Returns a single user
       tags:
         - Users
       parameters:
-        - in: path
-          name: userId
+        - name: userId
+          in: path
+          description: ID of user to return
           required: true
           type: integer
+          format: int64
       responses:
-        200:
-          description: OK
+        201:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/User"
+        400:     
+          description: User invalid ID
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: User not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    put:
+      summary: Update an existing user
+      description: User object that needs to be added to the database
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserParameters'
+      responses:
+        201:
+          description: User successfully edited
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:     
+          description: User Invalid ID supplied
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: User not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
     delete:
-      summary: Deletes a user.
+      summary: Deletes a user
+      description: User object that needs to be added to the store
+      consumes: ['application/json']
+      produces: ['application/json']
       tags:
         - Users
       parameters:
-        - in: path
-          name: userId
+        - name: userId
+          in: path
+          description: ID of user to return
           required: true
           type: integer
+          format: int64
       responses:
         200:
-          description: OK
+          description: User successfully delete
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: User Invalid ID supplied
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:     
+          description: User not edited
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /coupons:
+    get:
+      summary: Returns details of all coupon.
+      tags:
+        - Coupons
+      responses:
+        200:
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Coupon"
+        400:     
+          description: Coupon not found
+    post:
+      summary: Add a new coupon to the database
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Coupons
+      parameters:
+        - in: body
+          description: Coupon object that needs to be added to the database
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/CouponParameters'
+      responses:
+        201:
+          description: Coupon successfully created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:     
+          description: Coupon not created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /coupons/{couponId}: 
+    get:
+      summary: Find coupon by ID
+      description: Returns a single coupon
+      tags:
+        - Coupons
+      parameters:
+        - name: couponId
+          in: path
+          description: ID of coupon to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        201:
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Coupon"
+        400:     
+          description: Coupon invalid ID
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Coupon not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    put:
+      summary: Update an existing coupon
+      description: Coupon object that needs to be added to the database
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Coupons
+      parameters:
+        - name: couponId
+          in: path
+          description: ID of coupon to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/CouponParameters'
+      responses:
+        201:
+          description: Coupon successfully edited
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:     
+          description: Coupon Invalid ID supplied
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Coupon not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    delete:
+      summary: Deletes a coupon
+      description: Coupon object that needs to be added to the store
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Coupons
+      parameters:
+        - name: couponId
+          in: path
+          description: ID of coupon to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Coupon successfully delete
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Coupon Invalid ID supplied
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:     
+          description: Coupon not edited
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /carts:
+    get:
+      summary: Returns details of all Carts.
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Cart"
+        400:
+          description: Carts not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Carts not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /carts/{userId}:
+    get:
+      summary: Find Cart by User ID
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Cart"
+        400:
+          description: Carts is empty
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Carts not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    post:
+      summary: Add a new cart to the store
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: Object to add cart
+          required: true
+          schema:
+            $ref: "#/definitions/CartParameters"
+      responses:
+        201:
+          description: Cart successfully created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:   
+          description: Cart not created
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:   
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    delete:
+      summary: Deletes a Cart by ID
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Cart successfully delete
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Cart not delete
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /carts/{userId}/products:
+    post:
+      summary: Add a new Product in Cart by ID
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: Object to add cart
+          required: true
+          schema:
+            $ref: "#/definitions/CartPutProductParameters"
+      responses:
+        200:
+          description: Product successfully edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Product not edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /carts/{userId}/products/{productId}:
+    put:
+      summary: Change quantity in Product ID in Cart by ID
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+        - name: productId
+          in: path
+          description: ID of Product to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: Updated Cart object
+          required: true
+          schema:
+            $ref: "#/definitions/CartPostProductParameters"
+      responses:
+        200:
+          description: Product successfully edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Product not edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    delete:
+      summary: Deletes a Product in Cart by ID
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+        - name: productId
+          in: path
+          description: ID of Product to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Product successfully delete in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Product not delete in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /carts/{userId}/coupons:
+    post:
+      summary: Add a New Coupon in cart
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: Object to add cart
+          required: true
+          schema:
+            $ref: "#/definitions/CartPostCouponParameters"
+      responses:
+        200:
+          description: Coupon successfully created in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Coupon not created in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+    put:
+      summary: Change a Coupon in cart
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+        - in: body
+          name: body
+          description: Object to add cart
+          required: true
+          schema:
+            $ref: "#/definitions/CartPostCouponParameters"
+      responses:
+        200:
+          description: Coupon successfully edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Coupon not edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /carts/{userId}/coupons/{couponId}:
+    delete:
+      summary: Deletes a coupon in Cart by ID
+      consumes: ['application/json']
+      produces: ['application/json']
+      tags:
+        - Carts
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User to return
+          required: true
+          type: integer
+          format: int64
+        - name: couponId
+          in: path
+          description: ID of Coupon to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        200:
+          description: Coupon successfully edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        400:
+          description: Coupon not edited in cart
+          schema:
+            $ref: "#/definitions/ApiResponse"
+        404:
+          description: Cart not found
+          schema:
+            $ref: "#/definitions/ApiResponse"
 definitions:
-  Products:
+  ProductParameters:
+    type: object
+    required:
+    - name
+    - quantity
+    - price
+    properties:
+      name:
+        type: string
+        format: text
+        example: Remote control car
+      quantity:
+        type: integer
+        format: number
+        example: 1
+      price:
+        type: integer
+        format: number
+        example: 99.99
+  Product:
     type: object
     required:
     - id
     - name
-    - amount
+    - quantity
     - price
     properties:
       id:
-        type: string
-        format: id
+        type: integer
+        format: number
+        example: 1
       name:
         type: string
         format: text
-      amount:
+        example: Remote control car
+      quantity:
         type: integer
         format: number
+        example: 2
       price:
         type: integer
         format: number
-   
-# host: Danil0ws.swaggerhub.com
+        example: 99.99
+  UserParameters:
+    type: object
+    required:
+    - email
+    - name
+    properties:
+      email:
+        type: string
+        format: text
+        example: admin@exemple.com
+      name:
+        type: string
+        format: text
+        example: admin
+  User:
+    type: object
+    required:
+    - id
+    - email
+    - name
+    properties:
+      id:
+        type: integer
+        format: number
+        example: 1
+      email:
+        type: string
+        format: text
+        example: admin@exemple.com
+      name:
+        type: string
+        format: text
+        example: admin
+  CouponParameters:
+    type: object
+    required:
+    - active
+    - type
+    - code
+    - quantity
+    - value
+    properties:
+      active:
+        type: integer
+        format: number
+        example: 1
+      type:
+        type: string
+        format: text
+        enum:
+        - percentage
+        - fixed
+      code:
+        type: string
+        format: text
+        example: TEN10
+      quantity:
+        type: integer
+        format: number
+        example: 10
+      value:
+        type: integer
+        format: number
+        example: 10.0
+  Coupon:
+    type: object
+    required:
+    - id
+    - active
+    - type
+    - code
+    - quantity
+    - value
+    properties:
+      id:
+        type: integer
+        format: number
+        example: 1
+      active:
+        type: integer
+        format: number
+        example: 1
+      type:
+        type: string
+        format: text
+        enum:
+        - percentage
+        - fixed
+      code:
+        type: string
+        format: text
+        example: TEN10
+      quantity:
+        type: integer
+        format: number
+        example: 10
+      value:
+        type: integer
+        format: number
+        example: 10.0
+  Cart:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: number
+        example: 1
+      user_id:
+        type: integer
+        format: number
+        example: 1
+      products:
+        items:
+          $ref: "#/definitions/CartProduct"
+      coupon_code:
+        type: integer
+        format: number
+        example: TEN10
+      disconut:
+        type: integer
+        format: number
+        example: 10.00
+      subtotal:
+        type: integer
+        format: number
+        example: 99.99
+      total:
+        type: integer
+        format: number
+        example: 89.99
+  CartProduct:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: number
+        example: 1
+      name:
+        type: string
+        format: text
+        example: Remote control car
+      quantity:
+        type: integer
+        format: number
+        example: 1
+      price:
+        type: integer
+        format: number
+        example: 99.99
+      price_unit:
+        type: integer
+        format: number
+        example: 99.99
+  CartParameters:
+    type: object
+    required:
+    - products
+    properties:
+      products:
+        items:
+          $ref: "#/definitions/CartProductParameters"
+      coupon_code:
+        type: string
+        format: text
+        example: TEN10
+  CartPostProductParameters:
+    type: object
+    required:
+    - quantity
+    properties:
+      quantity:
+        type: integer
+        format: number
+        example: 2 
+  CartPostCouponParameters:
+    type: object
+    required:
+    - coupon_code
+    properties:
+      coupon_code:
+        type: string
+        format: text
+        example: TEN10
+  CartPutProductParameters:
+    type: object
+    required:
+    - id
+    - quantity
+    properties:
+      id:
+        type: integer
+        format: number
+        example: 2
+      quantity:
+        type: integer
+        format: number
+        example: 1
+  CartProductParameters:
+    type: object
+    required:
+    - id
+    - quantity
+    properties:
+      id:
+        type: integer
+        format: number
+        example: 1
+      quantity:
+        type: integer
+        format: number
+        example: 1
+  ApiResponse:
+    type: object
+    properties:
+      message:
+        type: string
 basePath: /Danil0ws/challenge-01/1.0.0
 schemes:
  - https
-host: Danil0ws.swaggerhub.com
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com

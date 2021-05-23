@@ -9,7 +9,7 @@ class Product(Resource):
     """Operations related to products."""
 
     def get(self, id=None):
-        """Returns details of a product."""
+        """Returns details of a(all) user(s)."""
         if id:
             productReturn = ProductModel.FindById(id)
             return productReturn
@@ -27,7 +27,7 @@ class Product(Resource):
         'required': ['name', 'quantity', 'price']
     })
     def post(self):
-        """Creates a new product."""
+        """Add a new product to the database."""
         data_payload = request.get_json()
         productReturn = ProductModel.InsertData(data_payload)
         return productReturn
@@ -42,12 +42,12 @@ class Product(Resource):
         'required': ['name', 'quantity', 'price']
     })
     def put(self, id):
-        """Updates a product."""
+        """Update an existing product."""
         data_payload = request.get_json()
         productReturn = ProductModel.UpdateById(id, data_payload)
         return productReturn
 
     def delete(self, id):
-        """Deletes product."""
+        """Deletes a product."""
         productReturn = ProductModel.DeleteById(id)
         return productReturn

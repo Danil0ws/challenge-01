@@ -1,6 +1,7 @@
 #
 *.pyc
 __pycache__/
-db/datacart.db
+.env
 .vscode
-env
+env/
+venv/

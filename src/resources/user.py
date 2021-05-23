@@ -10,7 +10,7 @@ class User(Resource):
     """Operations related to Users."""
 
     def get(self, id=None):
-        """Returns details of a user."""
+        """Returns details of a(all) user(s)."""
         if id:
             userReturn = UserModel.FindById(id)
             return userReturn
@@ -27,7 +27,7 @@ class User(Resource):
         'required': ['name', 'email']
     })
     def post(self):
-        """Creates a new user."""
+        """Add a new user to the database."""
         data_payload = request.get_json()
         userReturn = UserModel.InsertData(data_payload)
         return userReturn
@@ -41,12 +41,12 @@ class User(Resource):
         'required': ['name', 'email']
     })
     def put(self, id):
-        """Updates a user."""
+        """Update an existing user."""
         data_payload = request.get_json()
         userReturn = UserModel.UpdateById(id, data_payload)
         return userReturn
 
     def delete(self, id):
-        """Deletes user."""
+        """Deletes a user."""
         userReturn = UserModel.DeleteById(id)
         return userReturn

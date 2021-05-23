@@ -3,7 +3,7 @@ import sqlite3
 
 class ProductModel:
 
-    db_path = './db/datacart.db'
+    db_path = './src/db/datacart.db'
 
     def __init__(self, id, name, quantity, price):
         self.id = id
@@ -14,10 +14,16 @@ class ProductModel:
     def __repr__(self):
         return str(self.id) + ", " + self.name + ", " + str(self.quantity) + ", " + str(self.price)
 
+    def json(self):
+        return {'id': self.id,
+                'name': self.name,
+                'quantity': self.quantity,
+                'price': self.price}
+
     @classmethod
     def FindById(cls, id):
         try:
-            ConnectionSqlite = sqlite3.connect(cls.db_path)
+            ConnectionSqlite = sqlite3.connect(ProductModel.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultProductById = CursorSqlite.execute(
                 'SELECT * FROM products WHERE id=?', (id,))
@@ -25,61 +31,61 @@ class ProductModel:
             for Row in RowsProductByIdAll:
                 ProductByIdAll = ProductModel(Row[0], Row[1], Row[2], Row[3])
                 ConnectionSqlite.close()
-                return {'code': 200, 'product': ProductByIdAll.json()}, 200
-            return {'code': 400, 'message': 'Product not found'}, 400
+                return ProductByIdAll.json(), 200
+            return {'message': 'Product Invalid ID supplied'}, 400
         except sqlite3.Error as er:
-            return {'code': 400, 'message': 'Product not found'}, 400
+            return {'message': 'Product not found'}, 404
 
     @classmethod
     def DeleteById(cls, id):
         try:
-            ConnectionSqlite = sqlite3.connect(cls.db_path)
+            ConnectionSqlite = sqlite3.connect(ProductModel.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultDeleteProduct = CursorSqlite.execute(
                 'DELETE FROM products WHERE id=?;', (id,))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultDeleteProduct.rowcount:
-                return {'code': 200, 'message': 'Product successfully delete'}, 200
-            return {'code': 400, 'message': 'Product not found'}, 400
+                return {'message': 'Product successfully delete'}, 200
+            return {'message': 'Product Invalid ID supplied'}, 400
         except sqlite3.Error as er:
-            return {'code': 400, 'message': 'Product not found'}, 400
+            return {'message': 'Product not found'}, 404
 
     @classmethod
     def UpdateById(cls, id, body):
         try:
-            ConnectionSqlite = sqlite3.connect(cls.db_path)
+            ConnectionSqlite = sqlite3.connect(ProductModel.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultUpdateProduct = CursorSqlite.execute(
-                'UPDATE products SET name = ?, quantity = ?, price = ? WHERE id=?;', (str(body['name']), int(body['quantity']), int(body['price']), id))
+                'UPDATE products SET name = ?, quantity = ?, price = ? WHERE id=?;', (str(body['name']), int(body['quantity']), float(body['price']), id))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultUpdateProduct.rowcount:
-                return {'code': 201, 'message': 'Product successfully edited'}, 201
-            return {'code': 400, 'message': 'Product not edited'}, 400
+                return {'message': 'Product successfully edited'}, 200
+            return {'message': 'Product Invalid ID supplied'}, 400
         except sqlite3.Error as er:
-            return {'code': 400, 'message': 'Product not edited'}, 400
+            return {'message': 'Product not edited'}, 404
 
     @classmethod
     def InsertData(cls, body):
         try:
-            ConnectionSqlite = sqlite3.connect(cls.db_path)
+            ConnectionSqlite = sqlite3.connect(ProductModel.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultInsertProduct = CursorSqlite.execute(
-                'INSERT INTO products VALUES(NULL, ?, ?, ?)', (str(body['name']), int(body['quantity']), int(body['price'])))
+                'INSERT INTO products VALUES(NULL, ?, ?, ?)', (str(body['name']), int(body['quantity']), float(body['price'])))
             ConnectionSqlite.commit()
             ConnectionSqlite.close()
             if ResultInsertProduct.rowcount:
-                return {'code': 201, 'message': 'Product successfully created'}, 201
-            return {'code': 400, 'message': 'Product not created'}, 400
+                return {'message': 'Product successfully created'}, 201
+            return {'message': 'Product not created'}, 400
         except sqlite3.Error as er:
-            return {'code': 400, 'message': 'Product not created'}, 400
+            return {'message': 'Product not created'}, 404
 
     @classmethod
     def FindAll(cls):
         try:
             ProductList = list()
-            ConnectionSqlite = sqlite3.connect(cls.db_path)
+            ConnectionSqlite = sqlite3.connect(ProductModel.db_path)
             CursorSqlite = ConnectionSqlite.cursor()
             ResultProductAll = CursorSqlite.execute('SELECT * FROM products')
             RowsProductAll = ResultProductAll.fetchall()
@@ -88,13 +94,7 @@ class ProductModel:
                     Row[0], Row[1], Row[2], Row[3]))
             ConnectionSqlite.close()
             if len(ProductList) >= 0:
-                return {'code': 200, 'products': [product.json() for product in ProductList]}, 200
-            return {'code': 400, 'message': 'Product not found'}, 400
+                return [product.json() for product in ProductList], 200
+            return {'message': 'Product not found'}, 400
         except sqlite3.Error as er:
-            return {'code': 400, 'message': 'Product not found'}, 400
-
-    def json(self):
-        return {'id': self.id,
-                'name': self.name,
-                'quantity': self.quantity,
-                'price': self.price}
+            return {'message': 'Product not found'}, 404
