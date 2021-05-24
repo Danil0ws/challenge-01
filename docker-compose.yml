@@ -1,0 +1,11 @@
+version: "3"
+services:
+  web:
+    build: .
+    volumes:
+      - ./:/usr/src/challenge-01/
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 4000
+      FLASK_DEBUG: 1
